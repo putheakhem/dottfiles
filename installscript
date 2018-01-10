@@ -1,0 +1,208 @@
+#!/bin/bash
+
+# hide "last login" line when starting a new terminal session
+touch $HOME/.hushlogin
+
+#################################################################
+### GIT
+#################################################################
+
+# global gitigore
+ln -s $HOME/.dotfiles/shell/.global-gitignore $HOME/.global-gitignore
+ln -s $HOME/.dotfiles/shell/.gitconfig $HOME/.gitconfig
+git config --global core.excludesfile $HOME/.global-gitignore
+clear
+
+# global git config setup
+git config --global core.autocrlf true
+
+#################################################################
+### ZSH
+#################################################################
+
+echo 'install oh-my-zhs'
+echo '-----------------'
+rm -rf $HOME/.oh-my-zsh
+curl -L http://install.ohmyz.sh | sh
+
+#symlink zsh prefs
+rm $HOME/.zshrc
+ln -s $HOME/.dotfiles/shell/.zshrc $HOME/.zshrc
+
+#################################################################
+### Homebrew
+#################################################################
+
+echo 'install homebrew'
+echo '----------------'
+echo install homebrew
+rm -rf /usr/local/Cellar /usr/local/.git && brew cleanup
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+
+#################################################################
+### PHP
+#################################################################
+
+echo 'install php'
+echo '------------'
+brew tap homebrew/dupes
+brew tap homebrew/versions
+brew tap homebrew/homebrew-php
+brew install --with-openssl curl
+brew install --with-homebrew-curl php71
+brew install php71-xdebug
+
+brew services start homebrew/php/php71
+
+brew install homebrew/php/php71-mcrypt
+brew install -s homebrew/php/php71-imagick
+brew install homebrew/php/php71-mongodb
+brew install homebrew/php/php71-intl
+brew install homebrew/php/php71-redis
+
+#################################################################
+### Composer
+#################################################################
+
+echo 'install composer'
+echo '----------------'
+cd ~/.dotfiles
+curl -sS https://getcomposer.org/installer | php
+echo 'move composer to /usr/local/bin/composer'
+mv -f composer.phar /usr/local/bin/composer
+
+### Global Composer Packages
+
+echo 'install security checker'
+echo '---------------------'
+composer global require sensiolabs/security-checker
+
+#################################################################
+### Redis
+#################################################################
+
+echo 'install redis'
+echo '------------'
+brew install redis
+brew services start redis
+
+#################################################################
+### Valet
+#################################################################
+
+echo 'install laravel valet'
+echo '---------------------'
+composer global require laravel/valet
+valet install
+
+#################################################################
+### MySQL
+#################################################################
+
+echo 'install mysql'
+echo '---------------'
+brew install mysql
+brew services start mysql
+
+#################################################################
+### Mongo
+#################################################################
+
+echo 'install mongo'
+echo '---------------'
+brew install mongo
+brew services start mongodb
+
+#################################################################
+### Node
+#################################################################
+
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+nvm install 8.1.2
+
+git clone https://github.com/lukechilds/zsh-nvm ~/.oh-my-zsh/custom/plugins/zsh-nvm
+
+echo 'install yarn'
+echo '------------'
+brew install yarn
+
+# install file watch (needed for watching phpunit tests)
+echo 'install onchange'
+echo '----------------'
+npm install -g onchange
+
+echo 'install bower'
+echo '------------'
+npm install -g bower
+
+echo 'install git-open'
+echo '------------'
+npm install -g git-open
+
+echo 'install release-it'
+echo '------------'
+npm install release-it -g
+
+#################################################################
+### Minio https://minio.io/
+#################################################################
+
+echo 'install minio'
+echo '------------'
+brew install minio/stable/minio
+mkdir /tmp/minio
+
+#################################################################
+### Docker
+#################################################################
+
+echo 'install docker'
+echo '------------'
+brew install docker docker-machine
+brew services start docker-machine
+
+# create the vm
+docker-machine create -d virtualbox dev
+
+#################################################################
+### Random
+#################################################################
+
+echo 'install dos2unix'
+echo '------------'
+brew install dos2unix
+
+#################################################################
+### Tidbits
+#################################################################
+
+echo 'fixing ZSH'
+echo '------------'
+
+cd ~/.oh-my-zsh
+
+git config core.autocrlf input
+git rm --cached -r .
+git reset --hard
+
+dos2unix ~/.oh-my-zsh/custom/plugins/zsh-nvm/zsh-nvm.plugin.zsh
+
+echo '++++++++++++++++++++++++++++++'
+echo '++++++++++++++++++++++++++++++'
+echo 'all done'
+
+echo '++++++++++++++++++++++++++++++'
+echo 'Some optional tidbits'
+
+echo '1. set some sensible os x defaults by running: $HOME/.dotfiles/osx/set-defaults.sh'
+echo '2. make a .dotfiles-custom/shell/.aliases for your personal commands'
+
+echo '++++++++++++++++++++++++++++++'
+echo 'Sometimes ZSH has issues with line endings after installing. Just copy the error and paste into their issues https://github.com/robbyrussell/oh-my-zsh/issues'
+
+echo '++++++++++++++++++++++++++++++'
+echo 'Please report issues!'

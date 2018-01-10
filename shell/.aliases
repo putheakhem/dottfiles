@@ -1,0 +1,125 @@
+#################################################################
+### OS Helpers
+#################################################################
+
+alias rf="rm -rf"
+alias hosts="sudo vi /etc/hosts"
+
+# List all files colorized in long format
+alias l="ls -laF"
+
+# Show/hide hidden files in Finder
+alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+# Show the lock screen
+alias afk='osascript -e "tell application "\""Finder"\"" to sleep"'
+
+### Navigation
+alias finder="open ."
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+
+### Network
+alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+
+#################################################################
+### GIT Helpers
+#################################################################
+
+alias git st="git status"
+alias git pop="git stash pop"
+alias git co="git checkout"
+alias git pull="git pull origin"
+alias git --amend="git commit --amend"
+alias git reset hard="git reset --hard HEAD"
+alias git clean="git clean -f"
+alias git stash="git stash --include-untracked"
+alias git ignore="git update-index --assume-unchanged"
+alias git log="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+#################################################################
+### Composer
+#################################################################
+
+alias outdated="composer outdated"
+alias check='php ~/.composer/vendor/sensiolabs/security-checker/./security-checker security:check composer.lock'
+
+
+#################################################################
+### Laravel Helpers
+#################################################################
+
+alias artisan="php artisan"
+alias artisan fresh="php artisan migrate:fresh --seed"
+
+
+#### Valet
+# Share with ngrok
+alias share="valet share"
+
+
+#### Testing
+alias dusk="php artisan dusk"
+alias t="./vendor/bin/phpunit"
+alias tf="./vendor/bin/phpunit --filter"
+
+#### Webpack
+alias npm dev="npm run dev"
+alias npm live="npm run hmr"
+alias npm run watch="npm run watch"
+alias npm pretty="npm run pretty"
+alias npm prod="npm run production"
+
+#### Workers
+alias retry="php artisan queue:retry all"
+alias work="php artisan queue:work --tries=1"
+
+### Horizon
+alias workers="php artisan horizon"
+alias stopWorkers="php artisan horizon:terminate"
+alias restartWorkers="stopWorkers && workers"
+alias pauseWorkers="php artisan horizon:pause"
+alias continue="php artisan horizon:continue"
+
+#### Homestead
+alias vm="ssh vagrant@127.0.0.1 -p 2222"
+alias homestead='function __homestead() { (cd ~/Homestead && vagrant $*); unset -f __homestead; }; __homestead'
+
+
+#################################################################
+### CodePier Helpers
+#################################################################
+
+alias routes="php artisan laroute:generate"
+
+
+#################################################################
+### Release IT - https://webpro.github.io/release-it
+#################################################################
+
+alias release="release-it"
+
+
+#################################################################
+### Random
+#################################################################
+
+# Fixes Files ^M "command not found: ^M"
+alias fixfile="dos2unix"
+alias fixdir="find . -type f -print0 | xargs -0 dos2unix"
+
+# Brew Helpers
+alias rmbrew="brew list | xargs brew rm"
+
+# Starts Minio Server
+alias s3="open http://127.0.0.1:9005; minio server --address :9005 /tmp/minio"
+
+# Fix Node Sass
+alias fixSass="npm rebuild node-sass"

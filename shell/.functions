@@ -1,0 +1,87 @@
+#################################################################
+### OS
+#################################################################
+
+# Create a new directory and enter it
+function mkd() {
+	mkdir -p "$@" && cd "$@"
+}
+
+archive () {
+   zip -r "$1".zip -i "$1" ;
+}
+
+#################################################################
+### MySQL
+#################################################################
+
+function db {
+    if [ "$1" = "refresh" ]; then
+        echo "drop database $2;" | mysql -u root
+        echo "create database $2;" | mysql -u root
+    elif [ "$1" = "create" ]; then
+        echo "create database $2;" | mysql -u root
+    elif [ "$1" = "drop" ]; then
+         echo "drop database $2;" | mysql -u root
+    fi
+}
+
+#################################################################
+### GIT
+#################################################################
+
+# Pushes all the code up in the current directory
+function pushme {
+
+    branch=`git branch | grep "*"`
+
+    params=''
+    
+    for i in $*;
+    do
+        params=" $params $i"
+    done
+    
+    params=$(echo $params | sed 's,^ *,,; s, *$,,')
+    
+    git add --all
+    git commit -m "$params"
+    git push origin ${branch/* /}
+}
+
+commit() {
+
+    echo What JIRA issue are you working on?
+    read issue
+
+    echo What did you work on?
+    read message
+
+    if [ ! -z "$issue" ]
+    then
+        issue="$issue : "
+    fi
+
+    branch=`git branch | grep "*"`
+
+    git add --all
+    git commit -m "$issue$message"
+    git push origin ${branch/* /}
+}
+
+deleteBranches() {
+    git branch --merged origin/develop | grep -v master | grep -v develop | grep -v dev | xargs git branch -d
+}
+
+#################################################################
+### NVM
+#################################################################
+
+nvmset() {
+    echo "$1" > .nvmrc
+}
+
+nvmdefault() {
+    nvm alias default $1
+}
+
